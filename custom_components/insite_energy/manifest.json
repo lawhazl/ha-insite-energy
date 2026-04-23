@@ -1,11 +1,11 @@
 {
   "domain": "insite_energy",
   "name": "Insite Energy",
-  "version": "1.0.0",
-  "documentation": "https://github.com/your-repo/insite-energy-ha",
+  "version": "1.1.0",
+  "documentation": "https://github.com/lawhazl/ha-insite-energy",
   "requirements": ["beautifulsoup4>=4.12.0"],
   "dependencies": [],
-  "codeowners": [],
+  "codeowners": ["@lawhazl"],
   "iot_class": "cloud_polling",
   "config_flow": true
 }

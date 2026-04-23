@@ -15,6 +15,8 @@ A Home Assistant custom integration for [Insite Energy](https://my.insite-energy
 | **Standing Charge** | Daily standing charge (p/day) |
 | **Last Meter Reading** | Timestamp of last meter communication |
 | **Meter Out of Comms** | Whether the hub has lost contact with Guru's servers |
+| **Last Poll Time** | When data was last fetched from the site |
+| **Next Poll Time** | When the next fetch is scheduled |
 
 ## Installation via HACS
 
@@ -34,7 +36,7 @@ Copy the `custom_components/insite_energy` folder into your HA `config/custom_co
 2. Search for **Insite Energy**
 3. Enter your `my.insite-energy.co.uk` email and password
 
-Data is refreshed every 15 minutes. Note that Insite Energy themselves only update the balance from the meter every 24 hours.
+Data is refreshed every 15 minutes by default. To change this, go to **Settings → Devices & Services → Insite Energy → Configure**. The minimum interval is 5 minutes to avoid being blocked by the site. Note that Insite Energy themselves only update the balance from the meter every 24 hours.
 
 ## Notes
 

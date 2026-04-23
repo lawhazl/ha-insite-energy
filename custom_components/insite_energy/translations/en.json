@@ -18,5 +18,16 @@
     "abort": {
       "already_configured": "This Insite Energy account is already configured"
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Insite Energy Options",
+        "description": "Adjust how often the integration polls for data. Minimum 5 minutes to avoid being blocked by the site.",
+        "data": {
+          "scan_interval": "Poll interval (minutes)"
+        }
+      }
+    }
   }
 }

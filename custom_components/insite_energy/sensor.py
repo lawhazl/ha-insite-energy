@@ -1,6 +1,8 @@
 """Sensor platform for Insite Energy."""
 from __future__ import annotations
 
+from datetime import datetime
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -80,10 +82,13 @@ async def async_setup_entry(
 ) -> None:
     """Set up Insite Energy sensors."""
     coordinator: InsiteEnergyCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(
+    entities: list[SensorEntity] = [
         InsiteEnergySensor(coordinator, entry, description)
         for description in SENSOR_DESCRIPTIONS
-    )
+    ]
+    entities.append(InsiteEnergyLastPollSensor(coordinator, entry))
+    entities.append(InsiteEnergyNextPollSensor(coordinator, entry))
+    async_add_entities(entities)
 
 
 class InsiteEnergySensor(CoordinatorEntity[InsiteEnergyCoordinator], SensorEntity):
@@ -100,13 +105,7 @@ class InsiteEnergySensor(CoordinatorEntity[InsiteEnergyCoordinator], SensorEntit
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{entry.entry_id}_{description.key}"
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            name="Insite Energy",
-            manufacturer="Insite Energy",
-            model="Guru Prepay Meter",
-            configuration_url="https://my.insite-energy.co.uk/Customer/Details",
-        )
+        self._attr_device_info = _device_info(entry)
 
     @property
     def native_value(self):
@@ -114,3 +113,51 @@ class InsiteEnergySensor(CoordinatorEntity[InsiteEnergyCoordinator], SensorEntit
         if self.coordinator.data is None:
             return None
         return self.coordinator.data.get(self.entity_description.key)
+
+
+def _device_info(entry: ConfigEntry) -> DeviceInfo:
+    return DeviceInfo(
+        identifiers={(DOMAIN, entry.entry_id)},
+        name="Insite Energy",
+        manufacturer="Insite Energy",
+        model="Guru Prepay Meter",
+        configuration_url="https://my.insite-energy.co.uk/Customer/Details",
+    )
+
+
+class InsiteEnergyLastPollSensor(CoordinatorEntity[InsiteEnergyCoordinator], SensorEntity):
+    """Sensor showing when data was last fetched."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Last Poll Time"
+    _attr_icon = "mdi:clock-check"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+
+    def __init__(self, coordinator: InsiteEnergyCoordinator, entry: ConfigEntry) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{entry.entry_id}_last_poll_time"
+        self._attr_device_info = _device_info(entry)
+
+    @property
+    def native_value(self) -> datetime | None:
+        return self.coordinator.last_poll_time
+
+
+class InsiteEnergyNextPollSensor(CoordinatorEntity[InsiteEnergyCoordinator], SensorEntity):
+    """Sensor showing when the next data fetch is scheduled."""
+
+    _attr_has_entity_name = True
+    _attr_name = "Next Poll Time"
+    _attr_icon = "mdi:clock-outline"
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+
+    def __init__(self, coordinator: InsiteEnergyCoordinator, entry: ConfigEntry) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{entry.entry_id}_next_poll_time"
+        self._attr_device_info = _device_info(entry)
+
+    @property
+    def native_value(self) -> datetime | None:
+        if self.coordinator.last_poll_time is None:
+            return None
+        return self.coordinator.last_poll_time + self.coordinator.update_interval

@@ -9,7 +9,7 @@ from typing import Any
 import requests
 from bs4 import BeautifulSoup
 
-from .const import BASE_URL, DETAILS_URL, LOGIN_URL
+from .const import DETAILS_URL, LOGIN_URL
 
 _LOGGER = logging.getLogger(__name__)
 

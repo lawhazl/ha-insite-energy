@@ -10,7 +10,7 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE, UnitOfEnergy
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -70,7 +70,6 @@ SENSOR_DESCRIPTIONS: list[SensorEntityDescription] = [
         key="meter_out_of_comms",
         name="Meter Out of Comms",
         icon="mdi:wifi-off",
-        device_class=SensorDeviceClass.ENUM,
     ),
 ]
 
